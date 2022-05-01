@@ -145,4 +145,5 @@ def human_move():
 
 
 if __name__ == "__main__":
+    print("something")
     initial_interface()
