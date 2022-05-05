@@ -30,6 +30,8 @@ snake = game.snake
 pygame.init()
 fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height * 15))
+background_image = pygame.image.load('images/grass.bmp')
+background_image = pygame.transform.scale(background_image, (game.settings.width * 15, game.settings.height * 15))
 pygame.display.set_caption('Gluttonous')
 
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
@@ -45,7 +47,6 @@ def message_display(text, x, y, color=black):
     text_surf, text_rect = text_objects(text, large_text, color)
     text_rect.center = (x, y)
     screen.blit(text_surf, text_rect)
-    pygame.display.update()
 
 
 def button(msg, x, y, w, h, inactive_color, active_color, action=None, parameter=None):
@@ -74,6 +75,7 @@ def quitgame():
 
 def crash():
     pygame.mixer.Sound.play(crash_sound)
+    snake.facing = 'right'
     message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)
     time.sleep(1)
 
@@ -86,10 +88,11 @@ def initial_interface():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        screen.fill(white)
+        screen.blit(background_image, [0, 0])
         message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
-        button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
+        button('Easy Mode', 60, 240, 120, 40, blue, bright_blue, game_loop, 'human')
+        button('Hard Mode', 60, 300, 120, 40, yellow, bright_yellow, game2_loop, 'human')
         button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
 
         pygame.display.update()
@@ -100,15 +103,39 @@ def game_loop(player, fps=10):
     game.restart_game()
 
     while not game.game_end():
+        screen.blit(background_image, [0, 0])
 
         pygame.event.pump()
 
         move = human_move()
-        fps = 5
+        fps = 6
 
         game.do_move(move)
 
-        screen.fill(black)
+        game.snake.blit(rect_len, screen)
+        game.strawberry.blit(screen)
+        game.blit_score(white, screen)
+
+        pygame.display.flip()
+
+        fpsClock.tick(fps)
+
+    crash()
+
+def game2_loop(player, fps=10):
+    game.restart_game()
+
+    while not game.game_end():
+        screen.blit(background_image, [0, 0])
+
+        pygame.event.pump()
+
+        move = human_move()
+        fps = 12
+        
+        game.do_move(move)
+
+
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
@@ -145,5 +172,4 @@ def human_move():
 
 
 if __name__ == "__main__":
-    print("Hello World")
     initial_interface()
