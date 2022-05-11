@@ -5,6 +5,8 @@ Created on Wed May 16 15:22:20 2018
 @author: zou
 """
 
+from pickle import TRUE
+from tkinter import CENTER
 import pygame
 import time
 from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE
@@ -14,6 +16,13 @@ from game import Game
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
+
+background = pygame.image.load('images/background.jpg')
+start_img = pygame.image.load('images/start_btn.png')
+start_img_ac = pygame.image.load('images/start_btnOn.png')
+exit_img = pygame.image.load('images/exit_btn.png')
+exit_img_ac = pygame.image.load('images/exit_btnOn.png')
+
 
 green = pygame.Color(0, 200, 0)
 bright_green = pygame.Color(0, 255, 0)
@@ -34,6 +43,13 @@ pygame.display.set_caption('Gluttonous')
 
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
 
+custom_font = pygame.font.Font("images/Wicked_Mouse.ttf", 35)
+custom_font_back = pygame.font.Font("images/Wicked_Mouse.ttf", 35)
+
+starting_message_back = custom_font_back.render("Gluttonous", TRUE, (0, 0, 0))
+starting_message = custom_font.render("Gluttonous", TRUE, (255, 191, 0))
+
+
 
 def text_objects(text, font, color=black):
     text_surface = font.render(text, True, color)
@@ -48,18 +64,20 @@ def message_display(text, x, y, color=black):
     pygame.display.update()
 
 
-def button(msg, x, y, w, h, inactive_color, active_color, action=None, parameter=None):
+def button(msg, x, y, w, h, inactive_img, active_img, action=None, parameter=None):
     mouse = pygame.mouse.get_pos()
     click = pygame.mouse.get_pressed()
-    if x + w > mouse[0] > x and y + h > mouse[1] > y:
-        pygame.draw.rect(screen, active_color, (x, y, w, h))
+    if x + w > mouse[0] > x and y + h > mouse[1] > y: #checks if the current mouse coordinates collide with the buttons coordinates
+        pygame.draw.rect(screen, 0 ,(x, y, w, h))
+        screen.blit(active_img, (x, y) )
         if click[0] == 1 and action != None:
             if parameter != None:
                 action(parameter)
             else:
                 action()
     else:
-        pygame.draw.rect(screen, inactive_color, (x, y, w, h))
+        pygame.draw.rect(screen, 0, (x, y, w, h))
+        screen.blit(inactive_img, (x, y))
 
     smallText = pygame.font.SysFont('comicsansms', 20)
     TextSurf, TextRect = text_objects(msg, smallText)
@@ -72,13 +90,13 @@ def quitgame():
     quit()
 
 
-def crash():
+def crash(): #when the player crashes to themselves, a sound plays and a defeat message displays
     pygame.mixer.Sound.play(crash_sound)
-    message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)
+    message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)# can change to wasted here
     time.sleep(1)
 
 
-def initial_interface():
+def initial_interface(): #menu
     intro = True
     while intro:
 
@@ -86,11 +104,15 @@ def initial_interface():
             if event.type == pygame.QUIT:
                 pygame.quit()
 
-        screen.fill(white)
-        message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
+        screen.fill(white) #starting screen display
+        screen.blit(background, (0, 0))
+        screen.blit(starting_message_back, (game.settings.width / 5.9 * 15, game.settings.height / 4.6 * 15))
+        screen.blit(starting_message, (game.settings.width / 6.2 * 15, game.settings.height / 4.7 * 15))
 
-        button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
-        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
+        #message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
+
+        button('', 80, 210, 80, 40, start_img, start_img_ac, game_loop, 'human') #start button
+        button('', 240, 210, 80, 40, exit_img, exit_img_ac, quitgame) #exit button
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
@@ -109,6 +131,7 @@ def game_loop(player, fps=10):
         game.do_move(move)
 
         screen.fill(black)
+        screen.blit(background, (0, 0)) #displaying the background during game
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
@@ -122,13 +145,13 @@ def game_loop(player, fps=10):
 
 
 def human_move():
-    direction = snake.facing
+    direction = snake.facing #stores the current direction
 
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
 
-        elif event.type == KEYDOWN:
+        elif event.type == KEYDOWN: #when any of the arrow keys are pressed, checks which one is pressed
             if event.key == K_RIGHT or event.key == ord('d'):
                 direction = 'right'
             if event.key == K_LEFT or event.key == ord('a'):
