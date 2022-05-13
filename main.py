@@ -199,4 +199,5 @@ def difficulty_hard():
 
 
 if __name__ == "__main__":
+    print("I dont like github")
     initial_interface()
