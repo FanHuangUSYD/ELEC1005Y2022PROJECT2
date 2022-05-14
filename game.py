@@ -7,6 +7,10 @@ Created on Wed Apr 25 15:19:25 2018
 import pygame, random
 import numpy as np
 
+pygame.mixer.init()
+eat_sound = pygame.mixer.Sound('./sound/eat.wav')
+
+
 class Settings:
     def __init__(self):
         self.width = 28
@@ -159,6 +163,7 @@ class Game:
         
         if self.snake.position == self.strawberry.position:
             self.strawberry.random_pos(self.snake)
+            pygame.mixer.Sound.play(eat_sound)
             reward = 1
             self.snake.score += 1
         else:
