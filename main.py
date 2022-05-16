@@ -5,6 +5,7 @@ Created on Wed May 16 15:22:20 2018
 @author: zou
 """
 
+from tabnanny import check
 from turtle import back
 from webbrowser import BackgroundBrowser
 import pygame #importing module pygame
@@ -39,6 +40,10 @@ pygame.init()
 fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height * 15)) #this sets the window size from what was set multiplied by 15
 pygame.display.set_caption('SnakeGame') #names the window 
+file = open("highscore.txt","r")
+displayscore = file.readline()
+file.close()
+
 
 # sounds
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
@@ -93,7 +98,30 @@ def quitgame():
 def crash():
     pygame.mixer.Sound.play(crash_sound)
     message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)
-    time.sleep(1)
+    file = open("scores.txt",'a')
+    file.write(f"{str(snake.score)}" + "\n")
+    file.close()
+    file = open("scores.txt","r")
+    score = file.readlines()
+    i = 0
+    check = 0
+    highscore = 0
+    while i < len(score):
+        num = int(score[i])
+        if check < num:
+            highscore = num
+            check = num
+            i = i + 1
+        else:
+            i = i + 1
+    file2 = open("highscore.txt","w")
+    highscore = str(highscore)
+    file2.write(highscore)
+    file2.close
+
+        
+
+
 
 
 def initial_interface():
@@ -102,7 +130,7 @@ def initial_interface():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-
+        file2 = open("highscore.txt","r")
         screen.fill(background) #background refers to background colour
         message_display('SNAKE GAME!!', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
@@ -111,9 +139,10 @@ def initial_interface():
         button('Difficulty', "u sure?", 170, 240 , 90, 40, orange, bright_orange, levels)
 
         paragraph_display("Current difficulty: easy", 210, 300, black)
-
+        paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
         pygame.display.update()
         pygame.time.Clock().tick(15)
+    file2.close()
 
 
 def game_loop(player, fps=10):
@@ -168,6 +197,7 @@ def human_move():
 def levels():
     intro = True
     while intro:
+        file2 = open("highscore.txt","r")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -175,6 +205,7 @@ def levels():
         screen.fill(background)
         
         message_display('Choose your level', 210 , 240)
+        paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
 
 
         button('Easy', "u dum",80, 100, 80, 40, green, bright_green, difficulty_easy)
@@ -184,6 +215,7 @@ def levels():
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
+    file2.close()
 
 
 def difficulty_easy():
