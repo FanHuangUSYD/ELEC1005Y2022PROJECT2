@@ -4,6 +4,7 @@ Created on Wed Apr 25 15:19:25 2018
 
 @author: zou
 """
+from logging import setLogRecordFactory
 import pygame, random
 import numpy as np
 
@@ -110,6 +111,28 @@ class Strawberry():
     def initialize(self):
         self.position = [15, 10]
       
+class Obstacle():
+    def __init__(self, settings):
+        self.settings = settings
+        self.style = str(random.randint(1, 8))
+        self.image = pygame.image.load('images/obstical.png')     
+        self.initialize()
+        
+    def random_pos(self, snake):
+        self.style = str(random.randint(1, 8))
+        self.image = pygame.image.load('images/obstical.png')         
+        
+        self.position[0] = random.randint(0, self.settings.width-1)
+        self.position[1] = random.randint(0, self.settings.height-1)
+
+        self.position[0] = random.randint(9, 19)
+        self.position[1] = random.randint(9, 19)
+        
+    def blit(self, screen):
+        screen.blit(self.image, [p * self.settings.rect_len for p in self.position])
+
+    def initialize(self):
+        self.position = [random.randint(0,28), random.randint(0,28)]
         
 class Game:
     """
@@ -118,6 +141,7 @@ class Game:
         self.settings = Settings()
         self.snake = Snake()
         self.strawberry = Strawberry(self.settings)
+        self.obstacle = Obstacle(self.settings)
         self.move_dict = {0 : 'up',
                           1 : 'down',
                           2 : 'left',
@@ -126,6 +150,7 @@ class Game:
     def restart_game(self):
         self.snake.initialize()
         self.strawberry.initialize()
+        self.obstacle.initialize()
 
     def current_state(self):         
         state = np.zeros((self.settings.width+2, self.settings.height+2, 2))
@@ -137,9 +162,16 @@ class Game:
         state[:, :, 1] = -0.5        
 
         state[self.strawberry.position[1], self.strawberry.position[0], 1] = 0.5
+        state[self.obstacle.position[1], self.obstacle.position[0], 1] = 0.5
+
         for d in expand:
             state[self.strawberry.position[1]+d[0], self.strawberry.position[0]+d[1], 1] = 0.5
+        for d in expand:
+             state[self.obstacle.position[1]+d[0], self.obstacle.position[0]+d[1], 1] = 0.5
         return state
+
+
+       
     
     def direction_to_int(self, direction):
         direction_dict = {value : key for key,value in self.move_dict.items()}
@@ -180,6 +212,8 @@ class Game:
         if self.snake.position[0] >= self.settings.width or self.snake.position[0] < 0:
             end = True
         if self.snake.position[1] >= self.settings.height or self.snake.position[1] < 0:
+            end = True
+        if self.snake.position[0] == self.obstacle.position[0] and self.snake.position[1] == self.obstacle.position[1]:
             end = True
         if self.snake.segments[0] in self.snake.segments[1:]:
             end = True
