@@ -99,8 +99,8 @@ class Strawberry():
         self.position[0] = random.randint(0, self.settings.width-1)
         self.position[1] = random.randint(0, self.settings.height-1)
 
-        self.position[0] = random.randint(9, 19)
-        self.position[1] = random.randint(9, 19)
+        self.position[0] = random.randint(0, self.settings.width-1)
+        self.position[1] = random.randint(0, self.settings.height-1)
         
         if self.position in snake.segments:
             self.random_pos(snake)
@@ -109,7 +109,7 @@ class Strawberry():
         screen.blit(self.image, [p * self.settings.rect_len for p in self.position])
    
     def initialize(self):
-        self.position = [15, 10]
+        self.position = [random.randint(0,28), random.randint(0,28)]
       
 class Obstacle():
     def __init__(self, settings):
@@ -132,7 +132,7 @@ class Obstacle():
         screen.blit(self.image, [p * self.settings.rect_len for p in self.position])
 
     def initialize(self):
-        self.position = [random.randint(0,28), random.randint(0,28)]
+        self.position = [random.randint(1,27), random.randint(1,27)]
         
 class rock():
     def __init__(self, settings):
