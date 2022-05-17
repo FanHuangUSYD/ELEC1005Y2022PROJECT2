@@ -14,7 +14,7 @@ from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE #impo
 from pygame.locals import QUIT
 from pygame import mixer
 
-from game import Game, Obstacle
+from game import Game, Obstacle, rock
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
@@ -142,6 +142,7 @@ def game_loop(player, fps=10):
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
         game.obstacle.blit(screen)
+        game.rock.blit(screen)
         game.blit_score(white, screen)
 
         pygame.display.flip()
