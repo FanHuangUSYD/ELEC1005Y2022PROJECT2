@@ -18,7 +18,7 @@ from game import Game, Obstacle, rock
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
-background = pygame.Color(0, 100, 0)
+background = pygame.Color(100, 45, 69)
 
 #all colors
 green = pygame.Color(0, 200, 0)
@@ -90,6 +90,7 @@ def button(msg, altmsg, x, y, w, h, inactive_color, active_color, action=None, p
         pygame.draw.rect(screen, inactive_color, (x, y, w, h))
 
     smallText = pygame.font.SysFont('merriweather', 20)
+
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = (x + (w / 2), y + (h / 2))
     screen.blit(TextSurf, TextRect)
@@ -143,6 +144,7 @@ def initial_interface():
         button('Quit', "No :(", 270, 240, 80, 40, red, bright_red, quitgame) #this is the button quit 
         button('Difficulty', "u sure?", 170, 240 , 90, 40, orange, bright_orange, levels)
         button('Help', 'nice',360 , 10, 50, 40, yellow, bright_green, helpmenu)
+        #backbuttonforlevels
 
         paragraph_display("Current difficulty: easy", 210, 300, black)
         paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
@@ -178,7 +180,6 @@ def game_loop(player, fps=10):
         fpsClock.tick(fps)
 
     crash()
-
 
 def human_move():
     direction = snake.facing
@@ -268,13 +269,15 @@ def levels():
     
         screen.fill(background)
         
-        message_display('Choose your level', 210 , 240)
-        paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
+        backbuttonforlevels
+        message_display('Choose your level', 210 , 100)
+        paragraph_display(f"Highscore: {file2.readline()}",210,300,black)
 
 
-        button('Easy', "u dum",80, 100, 80, 40, green, bright_green, difficulty_easy)
-        button('Hard', "nice choice", 170, 100 , 90, 40, orange, bright_orange, difficulty_medium)
-        button('XTREME', "have fun", 270, 100, 80, 40, red, bright_red, difficulty_hard)
+        button('Easy', "u dum",80, 180, 80, 40, green, bright_green, difficulty_easy)
+        button('Hard', "nice choice", 170, 180 , 90, 40, orange, bright_orange, difficulty_medium)
+        button('XTREME', "have fun", 270, 180, 80, 40, red, bright_red, difficulty_hard)
+        button('back', ':)', 20, 360, 90, 40, yellow, bright_green, initial_interface)
 
 
         pygame.display.update()
