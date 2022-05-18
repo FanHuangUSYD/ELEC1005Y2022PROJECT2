@@ -4,7 +4,7 @@ Created on Wed May 16 15:22:20 2018
 
 @author: zou
 """
-
+import pygame
 from turtle import back
 from webbrowser import BackgroundBrowser
 import pygame #importing module pygame
