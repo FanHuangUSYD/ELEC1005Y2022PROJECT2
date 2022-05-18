@@ -5,12 +5,15 @@ Created on Wed May 16 15:22:20 2018
 @author: zou
 """
 
+from webbrowser import BackgroundBrowser
 import pygame
 import time
 from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE
 from pygame.locals import QUIT
 
 from game import Game
+
+background_image = pygame.image.load('images/snake_background.bmp') #added a new bmp to the image file, and loaded it into background_image variable
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
@@ -108,7 +111,8 @@ def game_loop(player, fps=10):
 
         game.do_move(move)
 
-        screen.fill(black)
+        screen.fill(black) 
+        screen.blit(background_image, [0,0]) #added the new background on top of the black background at coordinate [0,0]
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
