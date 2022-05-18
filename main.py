@@ -79,7 +79,7 @@ def button(msg, altmsg, x, y, w, h, inactive_color, active_color, action=None, p
     else:
         pygame.draw.rect(screen, inactive_color, (x, y, w, h))
 
-    smallText = pygame.font.SysFont('comicsansms', 20)
+    smallText = pygame.font.SysFont('merriwether', 20)
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = (x + (w / 2), y + (h / 2))
     screen.blit(TextSurf, TextRect)
@@ -109,7 +109,6 @@ def initial_interface():
         button('Go!', "CMON!!",80, 240, 80, 40, green, bright_green, game_loop, 'human') #this is the button go and it used the function 
         button('Quit', "bruh no", 270, 240, 80, 40, red, bright_red, quitgame) #this is the button quit 
         button('Difficulty', "u sure?", 170, 240 , 90, 40, orange, bright_orange, levels)
-
         paragraph_display("Current difficulty: easy", 210, 300, black)
 
         pygame.display.update()
@@ -141,7 +140,6 @@ def game_loop(player, fps=10):
         fpsClock.tick(fps)
 
     crash()
-
 
 def human_move():
     direction = snake.facing
