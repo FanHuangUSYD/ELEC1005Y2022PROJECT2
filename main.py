@@ -178,6 +178,34 @@ def game_loop(player, fps=10):
 
     crash()
 
+def easy_game_loop(player, fps=10):
+
+
+    game.restart_game()
+
+
+    while not game.game_end():
+
+        pygame.event.pump()
+
+        move = human_move()
+
+        game.do_move(move)
+
+        screen.blit(backgroundimage, (0,0))
+
+        game.snake.blit(rect_len, screen)
+        game.strawberry.blit(screen)
+        game.food.blit(screen)
+        game.obstacle.blit(screen)
+        game.blit_score(white, screen)
+
+        pygame.display.flip()
+
+        fpsClock.tick(fps)
+
+    crash()
+
 
 def human_move():
     direction = snake.facing
@@ -283,7 +311,7 @@ def levels():
 
 
 def difficulty_easy():
-    game_loop("human",10)
+    easy_game_loop("human",10)
 
 def difficulty_medium():
     game_loop("human",20)
