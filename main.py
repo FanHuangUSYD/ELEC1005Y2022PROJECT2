@@ -9,7 +9,7 @@ from turtle import back
 from webbrowser import BackgroundBrowser
 import pygame #importing module pygame
 import time #importing time module 
-from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE #importing the keys 
+from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE, K_RETURN #importing the keys 
 #key_down means that a key has been pressed
 from pygame.locals import QUIT
 from pygame import mixer
@@ -47,6 +47,7 @@ file.close()
 # sounds
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
 eat_sound = pygame.mixer.Sound('./sound/eat.wav')
+lobby_music = pygame.mixer.Sound('./sound/intro2.mp3')
 
 # images
 backgroundimage = pygame.image.load('./images/background.png')
@@ -95,10 +96,33 @@ def button(msg, altmsg, x, y, w, h, inactive_color, active_color, action=None, p
     TextRect.center = (x + (w / 2), y + (h / 2))
     screen.blit(TextSurf, TextRect)
 
+def pause_screen_message(msg, x, y, w, h, inactive_color):
+    pygame.draw.rect(screen, inactive_color, (x, y, w, h))
+    smallText = pygame.font.SysFont('comicsansms', 20)
+    TextSurf, TextRect = text_objects(msg, smallText)
+    TextRect.center = (x + (w / 2), y + (h / 2))
+    screen.blit(TextSurf, TextRect)
 
 def quitgame():
     pygame.quit()
     quit()
+
+def pause():
+    paused = True
+    while paused:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_ESCAPE:
+                    pygame.quit()
+                    quit() # this is not good, need to know how pygame.quit works
+            if event.type == pygame.KEYDOWN:
+                if event.key == K_RETURN:
+                    paused = False
+        screen.fill(white)
+        message_display('PAUSED', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
+        pause_screen_message('Press ENTER to continue', 165, 240, 80, 40, white)
+        pygame.display.update()
+        pygame.time.Clock().tick(15)
 
 
 def crash():
@@ -136,6 +160,8 @@ def initial_interface():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
+        #mixer.music.load('./sound/intro2.mp3') keeps flickering cuz the intro screen is flickering for some reason
+       #mixer.music.play(-1) this will play on repeat
         file2 = open("highscore.txt","r")
         screen.fill(background) #background refers to background colour
         message_display('SNAKE GAME!!', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
@@ -199,6 +225,10 @@ def human_move():
                 direction = 'down'
             if event.key == K_ESCAPE:
                 pygame.event.post(pygame.event.Event(QUIT))
+            if event.key == K_RETURN:
+                #pause button here
+                pause()
+
 
     move = game.direction_to_int(direction)
     return move
