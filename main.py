@@ -89,7 +89,8 @@ def button(msg, altmsg, x, y, w, h, inactive_color, active_color, action=None, p
     else:
         pygame.draw.rect(screen, inactive_color, (x, y, w, h))
 
-    smallText = pygame.font.SysFont('merriwether', 20)
+    smallText = pygame.font.SysFont('merriweather', 20)
+
     TextSurf, TextRect = text_objects(msg, smallText)
     TextRect.center = (x + (w / 2), y + (h / 2))
     screen.blit(TextSurf, TextRect)
@@ -143,6 +144,8 @@ def initial_interface():
         button('Quit', "No :(", 270, 240, 80, 40, red, bright_red, quitgame) #this is the button quit 
         button('Difficulty', "u sure?", 170, 240 , 90, 40, orange, bright_orange, levels)
         button('Help', 'nice',360 , 10, 50, 40, yellow, bright_green, helpmenu)
+        #backbuttonforlevels
+
         paragraph_display("Current difficulty: easy", 210, 300, black)
         paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
         pygame.display.update()
@@ -266,6 +269,7 @@ def levels():
     
         screen.fill(background)
         
+        backbuttonforlevels
         message_display('Choose your level', 210 , 100)
         paragraph_display(f"Highscore: {file2.readline()}",210,300,black)
 
