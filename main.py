@@ -14,11 +14,11 @@ from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE #impo
 from pygame.locals import QUIT
 from pygame import mixer
 
-from game import Game
+from game import Game, Obstacle, rock
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
-background = pygame.Color(0, 100, 0)
+background = pygame.Color(100, 45, 69)
 
 #all colors
 green = pygame.Color(0, 200, 0)
@@ -39,6 +39,10 @@ pygame.init()
 fpsClock = pygame.time.Clock()
 screen = pygame.display.set_mode((game.settings.width * 15, game.settings.height * 15)) #this sets the window size from what was set multiplied by 15
 pygame.display.set_caption('SnakeGame') #names the window 
+file = open("highscore.txt","r")
+displayscore = file.readline()
+file.close()
+
 
 # sounds
 crash_sound = pygame.mixer.Sound('./sound/crash.wav')
@@ -53,13 +57,19 @@ def text_objects(text, font, color=black):
 
 
 def message_display(text, x, y, color=black):
-    large_text = pygame.font.SysFont('comicsansms', 50)
+    large_text = pygame.font.SysFont('merriweather', 50)
     text_surf, text_rect = text_objects(text, large_text, color)
     text_rect.center = (x, y)
     screen.blit(text_surf, text_rect)
 
 def paragraph_display(text, x, y, color=black):
-    small_text = pygame.font.SysFont('comicsansms', 20)
+    small_text = pygame.font.SysFont('merriweather', 25)
+    text_surf, text_rect = text_objects(text, small_text, color)
+    text_rect.center = (x, y)
+    screen.blit(text_surf, text_rect)
+
+def paragraph_displaynew(text, x,y, color = black):
+    small_text = pygame.font.SysFont('merriweather', 30)
     text_surf, text_rect = text_objects(text, small_text, color)
     text_rect.center = (x, y)
     screen.blit(text_surf, text_rect)
@@ -93,7 +103,30 @@ def quitgame():
 def crash():
     pygame.mixer.Sound.play(crash_sound)
     message_display('crashed', game.settings.width / 2 * 15, game.settings.height / 3 * 15, white)
-    time.sleep(1)
+    file = open("scores.txt",'a')
+    file.write(f"{str(snake.score)}" + "\n")
+    file.close()
+    file = open("scores.txt","r")
+    score = file.readlines()
+    i = 0
+    check = 0
+    highscore = 0
+    while i < len(score):
+        num = int(score[i])
+        if check < num:
+            highscore = num
+            check = num
+            i = i + 1
+        else:
+            i = i + 1
+    file2 = open("highscore.txt","w")
+    highscore = str(highscore)
+    file2.write(highscore)
+    file2.close
+
+        
+
+
 
 
 def initial_interface():
@@ -102,17 +135,19 @@ def initial_interface():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
-
+        file2 = open("highscore.txt","r")
         screen.fill(background) #background refers to background colour
         message_display('SNAKE GAME!!', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
-        button('Go!', "CMON!!",80, 240, 80, 40, green, bright_green, game_loop, 'human') #this is the button go and it used the function 
-        button('Quit', "bruh no", 270, 240, 80, 40, red, bright_red, quitgame) #this is the button quit 
+        button('Play!', "CMON!!",80, 240, 80, 40, green, bright_green, game_loop, 'human') #this is the button go and it used the function 
+        button('Quit', "No :(", 270, 240, 80, 40, red, bright_red, quitgame) #this is the button quit 
         button('Difficulty', "u sure?", 170, 240 , 90, 40, orange, bright_orange, levels)
+        button('Help', 'nice',360 , 10, 50, 40, yellow, bright_green, helpmenu)
         paragraph_display("Current difficulty: easy", 210, 300, black)
-
+        paragraph_display(f"Highscore: {file2.readline()}",210,350,black)
         pygame.display.update()
         pygame.time.Clock().tick(15)
+    file2.close()
 
 
 def game_loop(player, fps=10):
@@ -133,6 +168,8 @@ def game_loop(player, fps=10):
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
+        game.obstacle.blit(screen)
+        game.rock.blit(screen)
         game.blit_score(white, screen)
 
         pygame.display.flip()
@@ -163,25 +200,86 @@ def human_move():
     move = game.direction_to_int(direction)
     return move
 
+
+def helpmenu():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        screen.fill(background)
+
+        paragraph_display("Welcome to the python game!", 210, 100)
+        paragraph_display("Please select an option below for info", 210, 130)
+        button('Controls', ':)', 100, 200, 90, 40, yellow, bright_green, helpmenucts)
+        button('Instructions', ':)', 240, 200, 90, 40, yellow, bright_green, helpmenuits)
+        button('back', ':)', 10, 360, 90, 40, yellow, bright_green, initial_interface)
+        
+        pygame.display.update()
+        pygame.time.Clock().tick(100)
+
+def helpmenucts():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        screen.fill(background)
+
+        paragraph_displaynew("Controls are as follows", 210, 100)
+        paragraph_display("Keyboard bindings:", 210, 130)
+        paragraph_display("W: Move Forward", 210, 160)
+        paragraph_display("A: Move Left", 210, 190)
+        paragraph_display("S: Move Backward", 210, 220)
+        paragraph_display("D: Move Right", 210, 250)
+        button('back', ':)', 170, 300, 90, 40, yellow, bright_green, helpmenu)
+
+        pygame.display.update()
+        pygame.time.Clock().tick(50)
+
+def helpmenuits():
+    intro = True
+    while intro:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+        screen.fill(background)
+
+        paragraph_displaynew("Instructions", 210, 100)
+        paragraph_display("This is a indie snake game", 210, 130)
+        paragraph_display("where you control a snake to eat", 210, 160)
+        paragraph_display("food that randomly generates", 210, 190)
+        paragraph_display("Be careful to not hit the walls", 210, 220)
+        paragraph_display("or your own tail if it gets long!", 210, 250)
+        button('back', ':)', 170, 300, 90, 40, yellow, bright_green, helpmenu)
+
+        pygame.display.update()
+        pygame.time.Clock().tick(50)
+
 def levels():
     intro = True
     while intro:
+        file2 = open("highscore.txt","r")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
     
         screen.fill(background)
         
-        message_display('Choose your level', 210 , 240)
+        message_display('Choose your level', 210 , 100)
+        paragraph_display(f"Highscore: {file2.readline()}",210,300,black)
 
 
-        button('Easy', "u dum",80, 100, 80, 40, green, bright_green, difficulty_easy)
-        button('Hard', "nice choice", 170, 100 , 90, 40, orange, bright_orange, difficulty_medium)
-        button('XTREME', "have fun", 270, 100, 80, 40, red, bright_red, difficulty_hard)
+        button('Easy', "u dum",80, 180, 80, 40, green, bright_green, difficulty_easy)
+        button('Hard', "nice choice", 170, 180 , 90, 40, orange, bright_orange, difficulty_medium)
+        button('XTREME', "have fun", 270, 180, 80, 40, red, bright_red, difficulty_hard)
+        button('back', ':)', 20, 360, 90, 40, yellow, bright_green, initial_interface)
 
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
+    file2.close()
+
 
 
 def difficulty_easy():
