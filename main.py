@@ -93,10 +93,31 @@ def initial_interface():
         message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
         button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
+        button('Game Rule', 175, 240, 80, 40, blue, bright_blue, game_rule)#game rule button
         button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
+        
+        
+       
+def game_rule():#a page for game rule
+    intro = True
+    while intro:
+        for e in pygame.event.get():
+            if e.type is pygame.QUIT:
+                pygame.quit()
+
+        screen.fill(white)
+        message_display('Game rule', game.settings.width / 3 * 10, game.settings.height / 6 * 10)
+        message_display('Text', game.settings.width / 8 * 30, game.settings.height / 6 * 30)
+
+        button('Play!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
+        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
+
+        pygame.display.update()
+        pygame.time.Clock().tick(15)
+
 
 
 def game_loop(player, fps=10):
