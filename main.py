@@ -5,12 +5,17 @@ Created on Wed May 16 15:22:20 2018
 @author: zou
 """
 
+from webbrowser import BackgroundBrowser
 import pygame
 import time
 from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE
 from pygame.locals import QUIT
+from pygame import mixer # imported mixer from pygame for background music sound
 
 from game import Game
+
+gamerule_image = pygame.image.load('images/game_rule.bmp') #added a new bmp to the image file, and loaded it into gamerule_image variable
+background_image = pygame.image.load('images/snake_background.bmp') #added a new bmp to the image file, and loaded it into background_image variable
 
 black = pygame.Color(0, 0, 0)
 white = pygame.Color(255, 255, 255)
@@ -90,14 +95,37 @@ def initial_interface():
         message_display('Gluttonous', game.settings.width / 2 * 15, game.settings.height / 4 * 15)
 
         button('Go!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
+        button('Game Rule', 175, 240, 80, 40, blue, bright_blue, game_rule)#game rule button
         button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
+
+        pygame.display.update()
+        pygame.time.Clock().tick(15)
+        
+        
+       
+def game_rule():#a page for game rule
+    intro = True
+    while intro:
+        for e in pygame.event.get():
+            if e.type is pygame.QUIT:
+                pygame.quit()
+
+        screen.fill(white) #filling the screen with a white background
+        screen.blit(gamerule_image, [0, 0])
+
+        button('Play!', 80, 240, 80, 40, green, bright_green, game_loop, 'human') #adding back the original play button
+        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame) #adding back the original quit button
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
 
 
+
 def game_loop(player, fps=10):
     game.restart_game()
+
+    mixer.music.load('./sound/bgm.wav') #loaded our bmg.wav from the sound and use it as background music
+    mixer.music.play(-1) #play the music with (-1) to make it play continuously
 
     while not game.game_end():
 
@@ -108,7 +136,8 @@ def game_loop(player, fps=10):
 
         game.do_move(move)
 
-        screen.fill(black)
+        screen.fill(black) 
+        screen.blit(background_image, [0,0]) #added the new background on top of the black background at coordinate [0,0]
 
         game.snake.blit(rect_len, screen)
         game.strawberry.blit(screen)
@@ -118,6 +147,7 @@ def game_loop(player, fps=10):
 
         fpsClock.tick(fps)
 
+    mixer.music.stop() #stops the music when you crash 
     crash()
 
 

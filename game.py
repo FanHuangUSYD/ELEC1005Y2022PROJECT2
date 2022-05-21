@@ -6,6 +6,8 @@ Created on Wed Apr 25 15:19:25 2018
 """
 import pygame, random
 import numpy as np
+from pygame import mixer
+
 
 class Settings:
     def __init__(self):
@@ -158,6 +160,8 @@ class Game:
         self.snake.update()
         
         if self.snake.position == self.strawberry.position:
+            eating_sound = mixer.Sound('./sound/mc_eating.wav')  #added eating sound here, when the snack position touches straberry position
+            eating_sound.play()  #play eating sound once here
             self.strawberry.random_pos(self.snake)
             reward = 1
             self.snake.score += 1
