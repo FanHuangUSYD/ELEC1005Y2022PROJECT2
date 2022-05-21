@@ -10,6 +10,7 @@ import pygame
 import time
 from pygame.locals import KEYDOWN, K_RIGHT, K_LEFT, K_UP, K_DOWN, K_ESCAPE
 from pygame.locals import QUIT
+from pygame import mixer # imported mixer from pygame for background music sound
 
 from game import Game
 
@@ -109,11 +110,11 @@ def game_rule():#a page for game rule
             if e.type is pygame.QUIT:
                 pygame.quit()
 
-        screen.fill(white)
+        screen.fill(white) #filling the screen with a white background
         screen.blit(gamerule_image, [0, 0])
 
-        button('Play!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
-        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
+        button('Play!', 80, 240, 80, 40, green, bright_green, game_loop, 'human') #adding back the original play button
+        button('Quit', 270, 240, 80, 40, red, bright_red, quitgame) #adding back the original quit button
 
         pygame.display.update()
         pygame.time.Clock().tick(15)
@@ -122,6 +123,9 @@ def game_rule():#a page for game rule
 
 def game_loop(player, fps=10):
     game.restart_game()
+
+    mixer.music.load('./sound/bgm.wav') #loaded our bmg.wav from the sound and use it as background music
+    mixer.music.play(-1) #play the music with (-1) to make it play continuously
 
     while not game.game_end():
 
@@ -143,6 +147,7 @@ def game_loop(player, fps=10):
 
         fpsClock.tick(fps)
 
+    mixer.music.stop() #stops the music when you crash 
     crash()
 
 
