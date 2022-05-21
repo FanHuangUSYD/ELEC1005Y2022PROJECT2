@@ -113,7 +113,6 @@ def game_rule():#a page for game rule
         screen.blit(gamerule_image, [0, 0])
 
         button('Play!', 80, 240, 80, 40, green, bright_green, game_loop, 'human')
-        button('Back', 175, 240, 80, 40, blue, bright_blue, initial_interface)
         button('Quit', 270, 240, 80, 40, red, bright_red, quitgame)
 
         pygame.display.update()
